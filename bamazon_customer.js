@@ -34,9 +34,12 @@ var customerChoice = function(res){
     inquirer.prompt([{
         type: "input",
         name: "choice",
-        message: "What would you like to purchase?"
+        message: "Return to main menu by entering M \n What would you like to purchase?"
     }]).then(function(answer){
         var correct = false;
+        if(answer.choice.toUpperCase()==="M"){
+            process.exit();
+        }
         for(var i=0; i<res.length; i++){
             if(res[i].productName==answer.choice){
                 correct=true;
@@ -68,6 +71,10 @@ var customerChoice = function(res){
                     }
                 })
             }
+        } 
+        if(i==res.length && correct==false){
+            console.log("Not a valid selection!");
+            customerChoice(res);
         }
     })
 }
