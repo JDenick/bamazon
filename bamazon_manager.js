@@ -26,7 +26,24 @@ var displayTable = function(){
             "Quantity: " + res[i].stockQuantity + "\n" +
             "*********************************");
         }
-    }
-)}
+        promptMGMT(res);
+    })
+}
+
+var promptMGMT = function(res) {
+    inquirer.prompt([{
+        type: "rawlist",
+        name: "choice",
+        message: "What would you like to do?",
+        choices: ["Add a new item", "Add quantity to an existing item"]
+    }]).then(function(val){
+        if(val.choice=="Add new itme"){
+            addItem();
+        }
+        if(val.choice=="Add quantity to an existing item"){
+            addQuantity(res);
+        }
+    })
+}
 
 displayTable();
