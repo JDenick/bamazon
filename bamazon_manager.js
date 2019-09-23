@@ -37,12 +37,38 @@ var promptMGMT = function(res) {
         message: "What would you like to do?",
         choices: ["Add a new item", "Add quantity to an existing item"]
     }]).then(function(val){
-        if(val.choice=="Add new itme"){
+        if(val.choice=="Add a new item"){
             addItem();
         }
         if(val.choice=="Add quantity to an existing item"){
             addQuantity(res);
         }
+    })
+}
+
+function addItem(){
+    inquirer.prompt([{
+        type: "input",
+        name: "productName",
+        message: "What product are you going to add?"
+    },{
+       type: "input",
+       name: "departmentName",
+       message: "Which department will product be categorized in?"
+    },{
+        type: "input",
+        name: "price",
+        message: "What is the price of each individual item?"
+    },{
+        type: "input",
+        name: "quantity",
+        message: "How many items are available for sale?"
+    }]).then(function(val){
+        connection.query("INSERT INTO products (productName, departmentName, price, stockQuantity) VALUES ('"+val.productName+"','"+val.departmentName+"',"+val.price+","+val.quantity+");", function(err,res){
+                if(err)throw err;
+                console.log(val.productName+ "Added to Bamazon!");
+                displayTable();
+            })
     })
 }
 
