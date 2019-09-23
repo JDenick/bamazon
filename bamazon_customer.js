@@ -1,6 +1,8 @@
+// Packages used for customer app
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 
+// Created connection for mysql w/ appropriate data
 var connection = mysql.createConnection({
     host:"localhost",
     port:3306,
@@ -9,12 +11,14 @@ var connection = mysql.createConnection({
     database: "bamazon"
 })
 
+// Connection function to dispaly table / throw error if needed
 connection.connect(function(err){
     if (err) throw err;
     console.log("connection successful");
     displayTable();
 })
 
+// Created function to create table from mysql and also run customer choice function
 var displayTable = function(){
     connection.query("SELECT * FROM products", function(err, res){
         for(var i=0; i<res.length; i++){
@@ -30,6 +34,9 @@ var displayTable = function(){
     })
 }
 
+// Created function to ask customer what they want to buy & how many they would like to buy 
+// After answers are provided via inquirer, function returns to a review of what was purchased / amount that was purchaed in addition to updated data 
+// Will return error message if item is entered incorrectly by user / invalid inventory 
 var customerChoice = function(res){
     inquirer.prompt([{
         type: "input",
@@ -61,20 +68,27 @@ var customerChoice = function(res){
                             connection.query("UPDATE products SET stockQuantity='"+(res[id].stockQuantity-
                             answer.Quantity)+"' WHERE productName='"+product
                             +"'", function(err, res2){
-                            console.log("DATA HAS BEEN UPDATED:")
                             displayTable();
-                            console.log("Congratulations, product has been purchased!");
+                            console.log("======================");
+                            console.log("DATA HAS BEEN UPDATED:");
+                            console.log("Thank you! Your order of " + answer.Quantity + " " + product + " has been ordered!");
+                            console.log("Your final total is: $" + answer.Quantity*(res[id].price));
+                            console.log("======================");
                         })
                     } else {
-                        console.log("Not a valid Selection, please select another choice!");
-                        displayChoice(res);
+                        console.log("==================")
+                        console.log("Insufficient Inventory, please select another choice!");
+                        console.log("==================")
+                        displayTable(res);
                     }
                 })
             }
         } 
         if(i==res.length && correct==false){
-            console.log("Not a valid selection!");
-            customerChoice(res);
+            console.log("==================")
+            console.log("Not a valid selection, please select another choice!");
+            console.log("==================")
+            displayTable(res);
         }
     })
 }
