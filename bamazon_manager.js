@@ -15,7 +15,7 @@ var connection = mysql.createConnection({
 var displayTable = function(){
     connection.query("Select * FROM products", function(err, res){
         if (err) throw err;
-        console.log("ItemID\tProduct Name\tDepartment Name\tPrice\tNumber in Stock");
+        console.log("ItemID\nProduct Name\nDepartment Name\nPrice\nNumber in Stock");
         console.log("================");
         for(var i=0; i<res.length; i++){
             console.log(
@@ -66,9 +66,36 @@ function addItem(){
     }]).then(function(val){
         connection.query("INSERT INTO products (productName, departmentName, price, stockQuantity) VALUES ('"+val.productName+"','"+val.departmentName+"',"+val.price+","+val.quantity+");", function(err,res){
                 if(err)throw err;
-                console.log(val.productName+ "Added to Bamazon!");
+                console.log(val.productName+ " Added to Bamazon!");
                 displayTable();
             })
+    })
+}
+
+function addQuantity(res){
+    inquirer.prompt([{
+        type: "input",
+        name: "productName",
+        message: "Which product would you like to update?"
+    },{
+        type: "input",
+        name: "additions",
+        message: "How much stock would you like to add?"
+    }]).then(function(val){
+        for(i=0; i<res.length; i++){
+            if(res[i].productName==val.productName){
+                connection.query('UPDATE products SET stockQuantity=stockQuantity+'+val.added+' WHERE itemId='+res[i].itemId+';', function(err,res){
+                    if(err)throw err;
+                    if(res.affectedRows == 0){
+                        console.log("That item does not exist at thsi time. Try selecting a different item.");
+                        displayTable();
+                    } else {
+                        console.log("Inventory has been modified!");
+                        displayTable();
+                    }
+                })
+            }
+        }
     })
 }
 

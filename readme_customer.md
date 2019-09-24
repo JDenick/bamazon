@@ -1,4 +1,4 @@
-Please use the snapshots to go along w/ readme file
+Please use the snapshots to go along w/ readme_customer file
 
 -- Customer 1: --
 First part of the main code that holds packages used, connection to mysql, and function that displays the table which holds inventory data.
